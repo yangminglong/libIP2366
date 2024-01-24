@@ -1,0 +1,776 @@
+﻿
+[
+    {
+        "addr":"0x00",
+        "comment":"charge 使能寄存器",
+        "Bits":[
+            {
+                "bit":"7",
+                "len":"1",
+                "comment":"7 En_LOADOTP 开机唤醒重新复位寄存器值使能 0: 不重新复位寄存器值 1:重新复位寄存器值 默认 1"
+            },
+            {
+                "bit":"6",
+                "len":"1",
+                "comment":"MCU 重新复位寄存器 写1:重新复位寄存器为默认值,复位后该bit自动恢复为0 常态为0"
+            },
+            {
+                "bit":"5",
+                "len":"1",
+                "comment":"有异常的时候 INT 拉低 2MS ,提示 MCU 有异常发生 1:Enable 0:disable 默认 0"
+            },
+            {
+                "bit":"4",
+                "len":"1",
+                "comment":"C 口输入 DM DP 快充使能 1:Enable 0:disable 默认 1"
+            },
+            {
+                "bit":"3",
+                "len":"1",
+                "comment":"En _Vbus_SinkPd C 口输入 Pd 快充使能 1:Enable 0:disable 默认 1"
+            },
+            {
+                "bit":"2",
+                "len":"1",
+                "comment":"En_Vbus_SinkSCP C 口输入 SCP 快充使能 1:Enable 0:disable 默认 1"
+            },
+            {
+                "bit":"1",
+                "len":"1",
+                "comment":"Reserved"
+            },
+            {
+                "bit":"0",
+                "len":"1",
+                "comment":"Charger 充电使能(关闭后不可充电) 1:Enable 0:disable 默认 1"
+            }
+        ]
+    },
+    {
+        "addr":"0x01",
+        "comment":"串联节数设置、电池类型、电流设置模式",
+        "Bits":[
+            {
+                "bit":"7",
+                "len":"1",
+                "comment":"Reserved"
+            },
+            {
+                "bit":"4",
+                "len":"3",
+                "comment":"电池节数: 000:2 节; 001:3 节; 010:4 节; 011:5 节; 100:6 节;101:7 节(铁锂电池可用)默认100"
+            },
+            {
+                "bit":"3",
+                "len":"1",
+                "comment":"设置电池类型使能(电池类型由寄存器 0x01[2]) 1:Enable,允许设置电池类型; 0:disable,不允许设置电池类型 默认 0"
+            },
+            {
+                "bit":"2",
+                "len":"1",
+                "comment":"电池类型设置: 0:磷酸铁锂电池,单节电池涓流转恒流电压 2.5V,充 满电压 3.6V 左右; 1:普通锂电池,单节电池涓流转恒流电压 3.0V,充满 电压 4.2V 左右 默认 1"
+            },
+            {
+                "bit":"1",
+                "len":"1",
+                "comment":"选择电流设置模式使能: 1:Enable,允许选择电流设置模式; 0:disable,不允许选择电流设置模式; 默认 0"
+            },
+            {
+                "bit":"0",
+                "len":"1",
+                "comment":"选择电流设置模式(电流和功率寄存器 0x03 [6:0] ): 0:Iset 设置的是电池端电流; 1:Iset 设置的是输入端功率 默认 1"
+            }
+        ]
+
+    },
+    {
+        "addr":"0x02",
+        "comment":"Vset 充满电压设定",
+        "Bits":[
+            {
+                "bit":"7",
+                "len":"1",
+                "comment":"设置充满电压使能:1:Enable,允许设置充满电压; 0:disable,不允许设置充满电压. 默认 0"
+            },
+            {
+                "bit":"0",
+                "len":"7",
+                "comment":"充满电压设置磷酸铁锂电池模式时(0x01[2]=0),单节电池充满电 压 Vset=N*10+3500mV(最高 3.7V); 普通锂电池模式时(0x01[2]=1),单节电池充满电压Vset=N*10+4000mV(最高 4.4V). 默认00 1010"
+            }
+        ]
+    },
+    {
+        "addr":"0x03",
+        "comment":"Iset 充电功率或电流设置",
+        "Bits":[
+            {
+                "bit":"7",
+                "len":"1",
+                "comment":"设置充电功率或电流使能:1:Enable,允许设置充电功率或电流; 0:disable,不允许设置充电功率或电流. 默认 0"
+            },
+            {
+                "bit":"0",
+                "len":"7",
+                "comment":"电池端电流或功率设置:当设置为电池端电流时(0x01[0]=0),电池端电流 Iset=N*100mA(最大为 5A) ;当设置为充电输入功率模式时(0x01[0]=1),设置的充电功率 Pmax=N*1W(充电最大为 100W).默认0111100"
+            }
+        ]
+    },
+    {
+        "addr":"0x07",
+        "comment":"涓流充电电流、阈值和充电超时设置",
+        "Bits":[
+            {
+                "bit":"4",
+                "len":"4",
+                "comment":"涓流充电电流设置(最大的涓流充电电流 400ma) Itk=N*50mA. 默认 0100"
+            },
+            {
+                "bit":"2",
+                "len":"2",
+                "comment":"单节电池涓流转恒流充电电压阈值:当设置为磷酸铁锂模式时(0x01[2]=0): 00:2.3V; 01:2.4V; 10:2.5V; 11:2.6V; 当设置为普通锂电池模式时(0x01[2]=1): 00:2.8V; 01:2.9V; 10:3.0V; 11:3.1V. 默认 10"
+            },
+            {
+                "bit":"0",
+                "len":"2",
+                "comment":"充电超时设置: 00:disable,没有充电超时功能; 01:24h; 10:36h; 11:48h. 默认10"
+            }
+        ]
+    },
+    {
+        "addr":"0x08",
+        "comment":"停充电流和再充电阈值设置",
+        "Bits":[
+            {
+                "bit":"4",
+                "len":"4",
+                "comment":"停充充电电流设置:Istop=N*50mA. 默认 0010"
+            },
+            {
+                "bit":"2",
+                "len":"2",
+                "comment":"再充电阈值:00:充饱后没有再充电功能; 01:VTRGT – N*0.05; 10:VTRGT – N*0.1; 11:VTRGT – N*0.2. VTRGT –---充饱电压(addr:0x02) N----电池串联节数(addr:0x01). 默认10"
+            },
+            {
+                "bit":"0",
+                "len":"2",
+                "comment":"Reserved"
+            }
+        ]
+    },
+    {
+        "addr":"0x09",
+        "comment":"待机使能和低电电压设置",
+        "Bits":[
+            {
+                "bit":"7",
+                "len":"1",
+                "comment":"待机使能: 1:使能; 0:不使能. 默认1"
+            },
+            {
+                "bit":"6",
+                "len":"1",
+                "comment":"电池低电电压设置使能(电池电压设置寄存器 0x0A): 0:disable; 1:Enable. 默认0"
+            },
+            {
+                "bit":"5",
+                "len":"1",
+                "comment":"关掉电池低电关机功能: 0:disable; 1:Enable. 默认0"
+            },
+            {
+                "bit":"0",
+                "len":"5",
+                "comment":"Reserved"
+            }
+        ]
+    },
+    {
+        "addr":"0x0A",
+        "comment":"电池低电电压设置",
+        "Bits":[
+            {
+                "bit":"5",
+                "len":"3",
+                "comment":"电池低电电压设置: 000:锂电池 2.80V*N / 铁锂电池 2.3V*N; 001:锂电池 2.90V*N / 铁锂电池 2.4V*N; 010:锂电池 3.00V*N / 铁锂电池 2.5V*N; 011:锂电池 3.10V*N / 铁锂电池 2.6V*N; 100:锂电池 3.20V*N / 铁锂电池 2.7V*N;. N:电池串联节数. 默认010"
+            },
+            {
+                "bit":"0",
+                "len":"5",
+                "comment":"Reserved"
+            }
+        ]
+    },
+    {
+        "addr":"0x0B",
+        "comment":"输出使能寄存器",
+        "Bits":[
+            {
+                "bit":"7",
+                "len":"1",
+                "comment":"放电输出使能(关闭后不可输出): 1:Enable; 0:disable. 默认1"
+            },
+            {
+                "bit":"6",
+                "len":"1",
+                "comment":"C 口输出 DP/DM 快充使能 1:Enable; 0:disable. 默认1"
+            },
+            {
+                "bit":"5",
+                "len":"1",
+                "comment":"C 口输出 Pd 快充使能 1:Enable; 0:disable. 默认1"
+            },
+            {
+                "bit":"4",
+                "len":"1",
+                "comment":"C 口输出 SCP 快充使能 1:Enable; 0:disable. 默认1"
+            },
+            {
+                "bit":"0",
+                "len":"4",
+                "comment":"Reserved"
+            }
+        ]
+    },
+    {
+        "addr":"0x0C",
+        "comment":"输出最大功率选择寄存器",
+        "Bits":[
+            {
+                "bit":"5",
+                "len":"3",
+                "comment":"Vbus1 输出功率选择:000:20W; 001:25W; 010:30W; 011:45W; 100:60W; 101:100W. 默认101"
+            },
+            {
+                "bit":"4",
+                "len":"1",
+                "comment":"PD 140W 输出使能:1:使能; 0:不使能. 默认1"
+            },
+            {
+                "bit":"0",
+                "len":"4",
+                "comment":"Reserved"
+            }
+        ]
+    },
+    {
+        "addr":"0x22",
+        "comment":"TYPE-C 模式控制寄存器",
+        "Bits":[
+            {
+                "bit":"6",
+                "len":"2",
+                "comment":"Vbus CC 模式选择: 00:UFP; 01:DFP; 11:DRP. 默认0"
+            },
+            {
+                "bit":"0",
+                "len":"6",
+                "comment":"Reserved"
+            }
+        ]
+    },
+    {
+        "addr":"0x23",
+        "comment":"输出 Pdo 电流设置寄存器",
+        "Bits":[
+            {
+                "bit":"7",
+                "len":"1",
+                "comment":"5VPdo 电流设置:1:3A; 0:2.4A. 默认1"
+            },
+            {
+                "bit":"6",
+                "len":"1",
+                "comment":"Pps2Pdo 电流设置使能: 1:Enable; 0:disable. 默认0"
+            },
+            {
+                "bit":"5",
+                "len":"1",
+                "comment":"Pps1Pdo 电流设置使能: 1:Enable; 0:disable. 默认0"
+            },
+            {
+                "bit":"4",
+                "len":"1",
+                "comment":"20VPdo 电流设置使能: 1:Enable; 0:disable. 默认0"
+            },
+            {
+                "bit":"3",
+                "len":"1",
+                "comment":"15VPdo 电流设置使能: 1:Enable; 0:disable. 默认0"
+            },
+            {
+                "bit":"2",
+                "len":"1",
+                "comment":"12VPdo 电流设置使能: 1:Enable; 0:disable. 默认0"
+            },
+            {
+                "bit":"1",
+                "len":"1",
+                "comment":"9VPdo 电流设置使能: 1:Enable; 0:disable. 默认0"
+            },
+            {
+                "bit":"0",
+                "len":"1",
+                "comment":"5VPdo 电流设置使能: 1:Enable; 0:disable. 默认0"
+            }
+        ]
+    },
+    {
+        "addr":"0x24",
+        "comment":"5VPdo 电流设置寄存器",
+        "Bits":[
+            {
+                "bit":"0",
+                "len":"7",
+                "comment":"5VPdo 电流设置: 5VPdo=20mA*N (默认 3A,Max=3A). 默认0x96"
+            }
+        ]
+    },
+    {
+        "addr":"0x25",
+        "comment":"9VPdo 电流设置寄存器",
+        "Bits":[
+            {
+                "bit":"0",
+                "len":"7",
+                "comment":"9VPdo 电流设置: 9VPdo=20mA*N (默认 3A,Max=3A). 默认0x96"
+            }
+        ]
+    },
+    {
+        "addr":"0x26",
+        "comment":"12VPdo 电流设置寄存器",
+        "Bits":[
+            {
+                "bit":"0",
+                "len":"7",
+                "comment":"12VPdo 电流设置: 12VPdo=20mA*N (默认 3A,Max=3A). 默认0x96"
+            }
+        ]
+    },
+    {
+        "addr":"0x27",
+        "comment":"15VPdo 电流设置寄存器",
+        "Bits":[
+            {
+                "bit":"0",
+                "len":"7",
+                "comment":"15VPdo 电流设置: 15VPdo=20mA*N (默认 3A,Max=3A). 默认0x96"
+            }
+        ]
+    },
+    {
+        "addr":"0x28",
+        "comment":"20VPdo 电流设置寄存器",
+        "Bits":[
+            {
+                "bit":"0",
+                "len":"7",
+                "comment":"20VPdo 电流设置:20VPdo=20mA*N (默认 5A,需要识别到 emark,Max=5A) 没有识别到 emark 为 3A. 默认0xFA"
+            }
+        ]
+    },
+    {
+        "addr":"0x29",
+        "comment":"Pps1 Pdo 电流设置寄存器",
+        "Bits":[
+            {
+                "bit":"0",
+                "len":"7",
+                "comment":"Pps1 Pdo 电流设置: Pps1 Pdo=50mA*N (默认 5A,需要识别到emark,Max=5A) 没有识别到 emark 为 3A. 默认0x3C"
+            }
+        ]
+    },
+    {
+        "addr":"0x2A",
+        "comment":"Pps2 Pdo 电流设置寄存器",
+        "Bits":[
+            {
+                "bit":"0",
+                "len":"7",
+                "comment":"Pps2 Pdo 电流设置: Pps2 Pdo=50mA*N (默认 5A,需要识别到emark,Max=5A) 没有识别到 emark 为 3A. 默认0x3C"
+            }
+        ]
+    },
+    {
+        "addr":"0x2B",
+        "comment":"输出 Pdo 设置寄存器",
+        "Bits":[
+            {
+                "bit":"7",
+                "len":"1",
+                "comment":"Reserved"
+            },
+            {
+                "bit":"6",
+                "len":"1",
+                "comment":"Pps2 Pdo 使能 1:Enable; 0:disable. disable 后没有 Pps2 Pdo. 默认1"
+            },
+            {
+                "bit":"5",
+                "len":"1",
+                "comment":"Pps1 Pdo 使能 1:Enable; 0:disable. disable 后没有 Pps1 Pdo. 默认1"
+            },
+            {
+                "bit":"4",
+                "len":"1",
+                "comment":"20VPdo 使能 1:Enable; 0:disable. disable 后没有 20V Pdo. 默认1"
+            },
+            {
+                "bit":"3",
+                "len":"1",
+                "comment":"15VPdo 使能 1:Enable; 0:disable. disable 后没有 15V Pdo. 默认1"
+            },
+            {
+                "bit":"2",
+                "len":"1",
+                "comment":"12VPdo 使能 1:Enable; 0:disable. disable 后没有 12V Pdo. 默认1"
+            },
+            {
+                "bit":"1",
+                "len":"1",
+                "comment":"9VPdo 使能 1:Enable; 0:disable. disable 后没有 9V Pdo. 默认1"
+            },
+            {
+                "bit":"0",
+                "len":"1",
+                "comment":"Reserved"
+            }
+        ]
+    },
+    {
+        "addr":"0x30",
+        "comment":"电芯电量数据寄存器",
+        "Bits":[
+            {
+                "bit":"0",
+                "len":"7",
+                "comment":"电芯百分比电量数据(%) Soc_Cap=N"
+            }
+        ]
+    },
+    {
+        "addr":"0x31",
+        "comment":"充电状态控制寄存器",
+        "Bits":[
+            {
+                "bit":"6",
+                "len":"2",
+                "comment":"Reserved"
+            },
+            {
+                "bit":"5",
+                "len":"1",
+                "comment":"充电标志位: 1:充电状态(VbusOk 就算充电状态); 0:非充电状态."
+            },
+            {
+                "bit":"4",
+                "len":"1",
+                "comment":"充满状态标志位: 1:充电已充满; 0:充电未充满."
+            },
+            {
+                "bit":"3",
+                "len":"1",
+                "comment":"放电状态标志位: 1:放电状态且输出口已经打开,没有任何异常; 0:放电状态输出没有打开或者有放电异常."
+            },
+            {
+                "bit":"0",
+                "len":"3",
+                "comment":"Chg_state: 000:待机; 001:涓流; 010:恒流充电; 011:恒压充电; 100:充电等待中(包括未开启充电等情况); 101:充满状态; 110:充电超时."
+            }
+        ]
+    },
+    {
+        "addr":"0x32",
+        "comment":"充电状态控制寄存器",
+        "Bits":[
+            {
+                "bit":"6",
+                "len":"2",
+                "comment":"Chg_state: 00:5V 输入充电; 01:高压输入快充充电"
+            },
+            {
+                "bit":"0",
+                "len":"6",
+                "comment":"Reserved."
+            }
+        ]
+    },
+    {
+        "addr":"0x33",
+        "comment":"输入 Pd 状态控制寄存器",
+        "Bits":[
+            {
+                "bit":"7",
+                "len":"1",
+                "comment":"Vbus_Ok: 1:Vbus 有电; 0:Vbus 没电"
+            },
+            {
+                "bit":"6",
+                "len":"1",
+                "comment":"Vbus_Ov: 1:Vbus 输入过压; 0:Vbus 输入没有过压"
+            },
+            {
+                "bit":"3",
+                "len":"3",
+                "comment":"Reserved."
+            },
+            {
+                "bit":"0",
+                "len":"3",
+                "comment":"充电电压: 111:20V 充电; 110:15V 充电; 101:12V 充电; 100:9V 充电; 011:7V 充电; 010:5V 充电."
+            }
+        ]
+    },
+    {
+        "addr":"0x34",
+        "comment":"系统状态指示寄存器",
+        "Bits":[
+            {
+                "bit":"7",
+                "len":"1",
+                "comment":"TypeC Sink 输入连接标志位:1:有效; 0:无效"
+            },
+            {
+                "bit":"6",
+                "len":"1",
+                "comment":"TypeC Src 输出连接标志位: 1:有效; 0:无效"
+            },
+            {
+                "bit":"5",
+                "len":"1",
+                "comment":"Src_Pd_Ok 输出连接标志位:1:有效; 0:无效"
+            },
+            {
+                "bit":"4",
+                "len":"1",
+                "comment":"Sink_Pd_Ok 输入连接标志位: 1:有效; 0:无效"
+            },
+            {
+                "bit":"3",
+                "len":"1",
+                "comment":"输入快充有效标志位 Qc5V 和 Pd5V 不算快充 Ok: 1:有效; 0:无效."
+            },
+            {
+                "bit":"2",
+                "len":"1",
+                "comment":"输出快充有效标志位 Qc5V 和 Pd5V 不算快充 Ok: 1:有效; 0:无效."
+            },
+            {
+                "bit":"0",
+                "len":"2",
+                "comment":"Reserved."
+            }
+        ]
+    },
+    {
+        "addr":"0x35",
+        "comment":"输入 MOS 状态指示寄存器",
+        "Bits":[
+            {
+                "bit":"7",
+                "len":"1",
+                "comment":"Reserved."
+            },
+            {
+                "bit":"6",
+                "len":"1",
+                "comment":"Vbus 口输入 MOS 状态: 0:关闭状态; 1:开启状态"
+            },
+            {
+                "bit":"0",
+                "len":"6",
+                "comment":"Reserved."
+            }
+        ]
+    },
+    {
+        "addr":"0x38",
+        "comment":"系统过流指示寄存器",
+        "Bits":[
+            {
+                "bit":"6",
+                "len":"2",
+                "comment":"Reserved."
+            },
+            {
+                "bit":"5",
+                "len":"1",
+                "comment":"Vsys 输出过流标志位,需写 1 清 0. 1:Vsys 输出有触发过流信号; 0:Vsys 输出没有触发过流信号. 系统在 600mS 内连续检测到两次以上的过流状态就认为过流有效,并将此标志位置 1,外部主控读取此标志位即可判断是否有过流异常发生；从过流状态发生到系统休眠,时间约 1.5s,休眠后此标志位会维持为 1,所以外部主控需要在此时间内读取标志位并作出对应的处理,然后写 1 把标志位清 0；如果需要判断过流状态撤销,则需要把输出口重新打开(把寄存器 0x22[7]先写 0 再写 1),然后再读取状态标志位。"
+            },
+            {
+                "bit":"4",
+                "len":"1",
+                "comment":"Vsys 输出短路标志位,需写 1 清 0. 1:Vsys 输出有触发短路信号; 0:Vsys 输出没有触发短路信号. 系统在 600mS 内连续检测到两次以上的短路状态就认为短路有效,并将此标志位置 1,外部主控读取此标志位即可判断是否有短路异常发生；从短路状态发生到系统休眠,时间约 1.5s,休眠后此标志位会维持为 1,所以外部主控需要在此时间内读取标志位并作出对应的处理,然后写 1 把标志位清 0；如果需要判断短路状态撤销,则需要把输出口重新打开(把寄存器 0x22[7]先写 0 再写 1),然后再读取状态标志位。"
+            },
+            {
+                "bit":"0",
+                "len":"4",
+                "comment":"Reserved."
+            }
+        ]
+    },
+    {
+        "addr":"0x50",
+        "comment":"VBAT 电压寄存器 低8bit",
+        "Bits":[
+            {
+                "bit":"0",
+                "len":"8",
+                "comment":"BATVADC 数据的低8bit. VBATPIN 的电压."
+            }
+        ]
+    },
+    {
+        "addr":"0x51",
+        "comment":"VBAT 电压寄存器 高8bit",
+        "Bits":[
+            {
+                "bit":"0",
+                "len":"8",
+                "comment":"BATVADC 数据的高8bit. VBATPIN 的电压. VBAT=BATVADC (mV)."
+            }
+        ]
+    },
+    {
+        "addr":"0x52",
+        "comment":"Vsys 电压寄存器 低8bit",
+        "Bits":[
+            {
+                "bit":"0",
+                "len":"8",
+                "comment":"Vsys 数据的低8bit. VsysPIN 的电压."
+            }
+        ]
+    },
+    {
+        "addr":"0x53",
+        "comment":"Vsys 电压寄存器 高8bit",
+        "Bits":[
+            {
+                "bit":"0",
+                "len":"8",
+                "comment":"Vsys 数据的高8bit. VsysPIN 的电压. Vsys= VsysVADC (mV)."
+            }
+        ]
+    },
+    {
+        "addr":"0x54",
+        "comment":"输入电流寄存器 低8bit.0x31 寄存器 bit5 是充电标志位",
+        "Bits":[
+            {
+                "bit":"0",
+                "len":"8",
+                "comment":"充电输入电流数据的低8bit. Vbus 输入的电流."
+            }
+        ]
+    },
+    {
+        "addr":"0x55",
+        "comment":"输入电流寄存器 高8bit",
+        "Bits":[
+            {
+                "bit":"0",
+                "len":"8",
+                "comment":"充电输入电流数据的高8bit.Vbus 输入的电流 Iin=IVbusADC(mA)"
+            }
+        ]
+    },
+    {
+        "addr":"0x56",
+        "comment":"输出电流寄存器 低8bit.0x31 寄存器 bit3 是充电标志位",
+        "Bits":[
+            {
+                "bit":"0",
+                "len":"8",
+                "comment":"放电输出电流数据的低8bit. Vbus 输入的电流."
+            }
+        ]
+    },
+    {
+        "addr":"0x57",
+        "comment":"输出电流寄存器 高8bit",
+        "Bits":[
+            {
+                "bit":"0",
+                "len":"8",
+                "comment":"放电输出电流数据的高8bit.Vbus 输入的电流 Iout=IVbusADC(mA)"
+            }
+        ]
+    },
+    {
+        "addr":"0x6E",
+        "comment":"BAT 端电流寄存器 低8bit.",
+        "Bits":[
+            {
+                "bit":"0",
+                "len":"8",
+                "comment":"电芯端电流 IBATIADC 数据的低8bit."
+            }
+        ]
+    },
+    {
+        "addr":"0x6F",
+        "comment":"BAT 端电流寄存器 高8bit",
+        "Bits":[
+            {
+                "bit":"0",
+                "len":"8",
+                "comment":"电芯端电流 IBATIADC 数据的高8bit.IBAT= IBATIADC(mA)"
+            }
+        ]
+    },
+    {
+        "addr":"0x70",
+        "comment":"IVsys 端电流寄存器 低8bit.",
+        "Bits":[
+            {
+                "bit":"0",
+                "len":"8",
+                "comment":"IVsys 端电流 VsysIADC 数据的低8bit."
+            }
+        ]
+    },
+    {
+        "addr":"0x71",
+        "comment":"IVsys 端电流寄存器 高8bit",
+        "Bits":[
+            {
+                "bit":"0",
+                "len":"8",
+                "comment":"IVsys 端电流 VsysIADC 数据的高8bit.IVsys = VsysIADC(mA)"
+            }
+        ]
+    },
+    {
+        "addr":"0x74",
+        "comment":"Vsys 端功率寄存器 低8bit.",
+        "Bits":[
+            {
+                "bit":"0",
+                "len":"8",
+                "comment":"Vsys 端功率 ADC 数据的低8bit."
+            }
+        ]
+    },
+    {
+        "addr":"0x75",
+        "comment":"Vsys 端功率寄存器 中8bit",
+        "Bits":[
+            {
+                "bit":"0",
+                "len":"8",
+                "comment":"Vsys 端功率 ADC 数据的中8bit."
+            }
+        ]
+    },
+    {
+        "addr":"0x76",
+        "comment":"Vsys 端功率寄存器 高8bit",
+        "Bits":[
+            {
+                "bit":"0",
+                "len":"8",
+                "comment":"Vsys 端功率 ADC 数据的高8bit.Vsys_POW= Vsys_POW_ADC(mW)"
+            }
+        ]
+    }
+]
